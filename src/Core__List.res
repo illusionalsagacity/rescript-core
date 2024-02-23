@@ -283,7 +283,7 @@ let rec copyAuxWithMap2 = (f, cellX, cellY, prec) =>
 let rec copyAuxWithMapI = (f, i, cellX, prec) =>
   switch cellX {
   | list{h, ...t} =>
-    let next = mutableCell(f(. i, h), list{})
+    let next = mutableCell(f(. h, i), list{})
     unsafeMutateTail(prec, next)
     copyAuxWithMapI(f, i + 1, t, next)
   | list{} => ()
@@ -405,14 +405,14 @@ let mapWithIndexU = (xs, f) =>
   switch xs {
   | list{} => list{}
   | list{h, ...t} =>
-    let cell = mutableCell(f(. 0, h), list{})
+    let cell = mutableCell(f(. h, 0), list{})
     copyAuxWithMapI(f, 1, t, cell)
     cell
   }
 
 let mapWithIndex = (xs, f) => mapWithIndexU(xs, (. i, x) => f(i, x))
 
-let makeByU = (n, f) =>
+let fromInitializerU = (n, f) =>
   if n <= 0 {
     list{}
   } else {
@@ -429,7 +429,7 @@ let makeByU = (n, f) =>
     headX
   }
 
-let makeBy = (n, f) => makeByU(n, (. x) => f(x))
+let fromInitializer = (n, f) => fromInitializerU(n, (. x) => f(x))
 
 let make = (type a, n, v: a): list<a> =>
   if n <= 0 {
@@ -515,19 +515,19 @@ let rec reverseConcat = (l1, l2) =>
 
 let reverse = l => reverseConcat(l, list{})
 
-let rec flattenAux = (prec, xs) =>
+let rec flatAux = (prec, xs) =>
   switch xs {
   | list{} => unsafeMutateTail(prec, list{})
-  | list{h, ...r} => flattenAux(copyAuxCont(h, prec), r)
+  | list{h, ...r} => flatAux(copyAuxCont(h, prec), r)
   }
 
-let rec flatten = xs =>
+let rec flat = xs =>
   switch xs {
   | list{} => list{}
-  | list{list{}, ...xs} => flatten(xs)
+  | list{list{}, ...xs} => flat(xs)
   | list{list{h, ...t}, ...r} =>
     let cell = mutableCell(h, list{})
-    flattenAux(copyAuxCont(t, cell), r)
+    flatAux(copyAuxCont(t, cell), r)
     cell
   }
 
@@ -564,16 +564,16 @@ let rec forEachU = (xs, f) =>
 
 let forEach = (xs, f) => forEachU(xs, (. x) => f(x))
 
-let rec iteri = (xs, i, f) =>
+let rec forEachWithIndexAux = (xs, i, f) =>
   switch xs {
   | list{} => ()
   | list{a, ...l} =>
-    f(. i, a)->ignore
-    iteri(l, i + 1, f)
+    f(. a, i)
+    forEachWithIndexAux(l, i + 1, f)
   }
 
-let forEachWithIndexU = (l, f) => iteri(l, 0, f)
-let forEachWithIndex = (l, f) => forEachWithIndexU(l, (. i, x) => f(i, x))
+let forEachWithIndexU = (l, f) => forEachWithIndexAux(l, 0, f)
+let forEachWithIndex = (l, f) => forEachWithIndexAux(l, 0, (. x, i) => f(x, i))
 
 let rec reduceU = (l, accu, f) =>
   switch l {
@@ -796,18 +796,18 @@ let sort = (xs, cmp) => {
   fromArray(arr)
 }
 
-let rec getByU = (xs, p) =>
+let rec findU = (xs, p) =>
   switch xs {
   | list{} => None
   | list{x, ...l} =>
     if p(. x) {
       Some(x)
     } else {
-      getByU(l, p)
+      findU(l, p)
     }
   }
 
-let getBy = (xs, p) => getByU(xs, (. a) => p(a))
+let find = (xs, p) => findU(xs, (. a) => p(a))
 
 let rec filterU = (xs, p) =>
   switch xs {

@@ -371,7 +371,7 @@ function copyAuxWithMapI(f, _i, _cellX, _prec) {
       return ;
     }
     var next = {
-      hd: f(i, cellX.hd),
+      hd: f(cellX.hd, i),
       tl: /* [] */0
     };
     prec.tl = next;
@@ -545,27 +545,26 @@ function mapWithIndex(xs, f) {
     return /* [] */0;
   }
   var cell = {
-    hd: f$1(0, xs.hd),
+    hd: f$1(xs.hd, 0),
     tl: /* [] */0
   };
   copyAuxWithMapI(f$1, 1, xs.tl, cell);
   return cell;
 }
 
-function makeBy(n, f) {
-  var f$1 = Curry.__1(f);
+function fromInitializerU(n, f) {
   if (n <= 0) {
     return /* [] */0;
   }
   var headX = {
-    hd: f$1(0),
+    hd: f(0),
     tl: /* [] */0
   };
   var cur = headX;
   var i = 1;
   while(i < n) {
     var v = {
-      hd: f$1(i),
+      hd: f(i),
       tl: /* [] */0
     };
     cur.tl = v;
@@ -573,6 +572,10 @@ function makeBy(n, f) {
     i = i + 1 | 0;
   };
   return headX;
+}
+
+function fromInitializer(n, f) {
+  return fromInitializerU(n, Curry.__1(f));
 }
 
 function make(n, v) {
@@ -677,7 +680,7 @@ function reverse(l) {
   return reverseConcat(l, /* [] */0);
 }
 
-function flattenAux(_prec, _xs) {
+function flatAux(_prec, _xs) {
   while(true) {
     var xs = _xs;
     var prec = _prec;
@@ -691,7 +694,7 @@ function flattenAux(_prec, _xs) {
   };
 }
 
-function flatten(_xs) {
+function flat(_xs) {
   while(true) {
     var xs = _xs;
     if (!xs) {
@@ -703,7 +706,7 @@ function flatten(_xs) {
         hd: match.hd,
         tl: /* [] */0
       };
-      flattenAux(copyAuxCont(match.tl, cell), xs.tl);
+      flatAux(copyAuxCont(match.tl, cell), xs.tl);
       return cell;
     }
     _xs = xs.tl;
@@ -746,35 +749,42 @@ function mapReverse(l, f) {
   };
 }
 
-function forEach(xs, f) {
-  var _xs = xs;
-  var f$1 = Curry.__1(f);
+function forEachU(_xs, f) {
   while(true) {
-    var xs$1 = _xs;
-    if (!xs$1) {
+    var xs = _xs;
+    if (!xs) {
       return ;
     }
-    f$1(xs$1.hd);
-    _xs = xs$1.tl;
+    f(xs.hd);
+    _xs = xs.tl;
     continue ;
   };
 }
 
-function forEachWithIndex(l, f) {
-  var _xs = l;
-  var _i = 0;
-  var f$1 = Curry.__2(f);
+function forEach(xs, f) {
+  forEachU(xs, Curry.__1(f));
+}
+
+function forEachWithIndexAux(_xs, _i, f) {
   while(true) {
     var i = _i;
     var xs = _xs;
     if (!xs) {
       return ;
     }
-    f$1(i, xs.hd);
+    f(xs.hd, i);
     _i = i + 1 | 0;
     _xs = xs.tl;
     continue ;
   };
+}
+
+function forEachWithIndexU(l, f) {
+  forEachWithIndexAux(l, 0, f);
+}
+
+function forEachWithIndex(l, f) {
+  forEachWithIndexAux(l, 0, Curry.__2(f));
 }
 
 function reduce(l, accu, f) {
@@ -1175,21 +1185,23 @@ function sort(xs, cmp) {
   return fromArray(arr);
 }
 
-function getBy(xs, p) {
-  var _xs = xs;
-  var p$1 = Curry.__1(p);
+function findU(_xs, p) {
   while(true) {
-    var xs$1 = _xs;
-    if (!xs$1) {
+    var xs = _xs;
+    if (!xs) {
       return ;
     }
-    var x = xs$1.hd;
-    if (p$1(x)) {
+    var x = xs.hd;
+    if (p(x)) {
       return Caml_option.some(x);
     }
-    _xs = xs$1.tl;
+    _xs = xs.tl;
     continue ;
   };
+}
+
+function find(xs, p) {
+  return findU(xs, Curry.__1(p));
 }
 
 function filter(xs, p) {
@@ -1350,7 +1362,8 @@ export {
   get ,
   getExn ,
   make ,
-  makeBy ,
+  fromInitializerU ,
+  fromInitializer ,
   toShuffled ,
   drop ,
   take ,
@@ -1358,7 +1371,7 @@ export {
   concat ,
   concatMany ,
   reverseConcat ,
-  flatten ,
+  flat ,
   map ,
   zip ,
   zipBy ,
@@ -1367,7 +1380,9 @@ export {
   toArray ,
   reverse ,
   mapReverse ,
+  forEachU ,
   forEach ,
+  forEachWithIndexU ,
   forEachWithIndex ,
   reduce ,
   reduceWithIndex ,
@@ -1384,7 +1399,8 @@ export {
   compare ,
   equal ,
   has ,
-  getBy ,
+  findU ,
+  find ,
   filter ,
   filterWithIndex ,
   filterMap ,
