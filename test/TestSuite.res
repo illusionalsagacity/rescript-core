@@ -7,3 +7,5 @@ include ObjectTests
 include ResultTests
 include TypedArrayTests
 include FloatTests
+include DictTests
+include IteratorTests
