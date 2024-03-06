@@ -121,8 +121,7 @@ external supportedLocalesOfWithOptions: (array<string>, supportedLocalesOptions)
 
 @send external format: (t, Core__Date.t) => string = "format"
 @send
-external formatToParts: (t, Core__Date.t) => array<{"type": string, "value": string}> =
-  "formatToParts"
+external formatToParts: (t, Core__Date.t) => array<dateTimePart> = "formatToParts"
 
 @send
 external formatRange: (t, ~startDate: Core__Date.t, ~endDate: Core__Date.t) => string =
@@ -133,8 +132,4 @@ external formatRangeToParts: (
   t,
   ~startDate: Core__Date.t,
   ~endDate: Core__Date.t,
-) => array<{
-  "type": string,
-  "value": string,
-  "source": string,
-}> = "formatRangeToParts"
+) => array<dateTimeRangePart> = "formatRangeToParts"
