@@ -6,6 +6,7 @@
 - BREAKING: Adds typed bindings to `Intl`, replacing the options type of `{..}` with records. https://github.com/rescript-association/rescript-core/pull/65
 - BREAKING: Align List api with other modules (`List.getBy` -> `List.find` etc.). https://github.com/rescript-association/rescript-core/pull/195
 - Fix: Expose Intl.Common. https://github.com/rescript-association/rescript-core/pull/197
+- Add `Array.join` and deprecate `Array.joinWith`. https://github.com/rescript-association/rescript-core/pull/205
 - Add `Dict.forEach`, `Dict.forEachWithKey` and `Dict.mapValues` https://github.com/rescript-association/rescript-core/pull/181
 - Remove internal xxxU helper functions that are not needed anymore in uncurried mode. https://github.com/rescript-association/rescript-core/pull/191
 - Rename `Object.empty` to `Object.make` for consistency.
