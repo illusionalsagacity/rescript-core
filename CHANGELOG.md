@@ -5,6 +5,7 @@
 - BREAKING: Fixes the type of `RegExp.Result.t` to be `array<option<string>>` instead of `array<string>`. https://github.com/rescript-association/rescript-core/pull/233.
 - BREAKING: Adds typed bindings to `Intl`, replacing the options type of `{..}` with records. https://github.com/rescript-association/rescript-core/pull/65
 - BREAKING: Align List api with other modules (`List.getBy` -> `List.find` etc.). https://github.com/rescript-association/rescript-core/pull/195
+- Remove some deps to Belt, Pervasives and Js. https://github.com/rescript-association/rescript-core/pull/226/commits
 - Fix: Expose Intl.Common. https://github.com/rescript-association/rescript-core/pull/197
 - Add `Array.join` and deprecate `Array.joinWith`. https://github.com/rescript-association/rescript-core/pull/205
 - Add `Dict.forEach`, `Dict.forEachWithKey` and `Dict.mapValues` https://github.com/rescript-association/rescript-core/pull/181

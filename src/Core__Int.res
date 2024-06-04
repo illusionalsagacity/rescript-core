@@ -42,6 +42,14 @@ let fromString = (~radix=?, x) => {
 external mod: (int, int) => int = "%modint"
 
 type rangeOptions = {step?: int, inclusive?: bool}
+
+let abs = x =>
+  if x >= 0 {
+    x
+  } else {
+    -x
+  }
+
 let rangeWithOptions = (start, end, options) => {
   let isInverted = start > end
 
